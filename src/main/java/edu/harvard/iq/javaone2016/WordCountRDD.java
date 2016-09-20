@@ -34,7 +34,6 @@ public class WordCountRDD {
             master = runtimeMaster;
         }
       
-        WordCountRDD example = new WordCountRDD();
        
         SparkSession spark = SparkSession
                 .builder()
@@ -42,6 +41,7 @@ public class WordCountRDD {
                 .master(master) 
                 .getOrCreate();
 
+        WordCountRDD example = new WordCountRDD();
         example.run(spark,dir);
     }
 
@@ -58,8 +58,7 @@ public class WordCountRDD {
     
     JavaSparkContext jSparkContext = new JavaSparkContext(spark.sparkContext());  
     
-    // Distribute data to cluster nodes
-   
+    // Distribute data to cluster nodes   
     JavaRDD<String> sentences;
     if (dir==null) {
         sentences = jSparkContext.parallelize(data);
