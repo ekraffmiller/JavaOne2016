@@ -20,7 +20,7 @@ import org.apache.spark.sql.SparkSession.Builder;
 scp /Users/ellenk/src/JavaOne2016/target/JavaOne2016-1.0-SNAPSHOT.jar root@consilience-build.iq.harvard.edu:/root/javaone
 /Applications/spark-2.0.0-bin-hadoop2.7/bin/spark-submit --class edu.harvard.iq.javaone2016.WordCount --master spark://Ellens-MacBook-Pro-2.local:7077 --conf "spark.sql.shuffle.partitions=8" --verbose  /Users/ellenk/src/JavaOne2016/target/JavaOne2016-1.0-SNAPSHOT.jar "/Users/ellenk/test/text_doc_root/Laut/docs"
 /Applications/spark-2.0.0-bin-hadoop2.7/bin/spark-submit --class edu.harvard.iq.javaone2016.WordCount --master spark://Ellens-MacBook-Pro-2.local:7077  --verbose  /Users/ellenk/src/JavaOne2016/target/JavaOne2016-1.0-SNAPSHOT.jar 
-/root/spark-2.0.0-bin-hadoop2.7/bin/spark-submit --class edu.harvard.iq.javaone2016.WordCount --master mesos://zk://consilience-m1p.cloudapp.net:2181/mesos  --verbose  /root/javaone/JavaOne2016-1.0-SNAPSHOT.jar  
+/root/spark-2.0.0-bin-hadoop2.7/bin/spark-submit --class edu.harvard.iq.javaone2016.WordCount --master mesos://zk://consilience-m1p.cloudapp.net:2181/mesos --conf "spark.sql.shuffle.partitions=32" --verbose  /root/javaone/JavaOne2016-1.0-SNAPSHOT.jar   "/mnt/consilience-smb1/docs"
  */
 public class WordCount {
 
@@ -42,7 +42,7 @@ public class WordCount {
         WordCount example = new WordCount();
         Builder builder =SparkSession
                 .builder()
-                .appName("WordCount Dataset Example")
+                .appName("WordCount Dataset Example no sort")
                 .master(master); 
         
      
@@ -66,12 +66,12 @@ public class WordCount {
 
         Dataset<Row> sentencesDF;
         if (dir == null) {
-            sentencesDF = spark.createDataset(data, Encoders.STRING()).toDF();
+            Dataset<String> test = spark.createDataset(data, Encoders.STRING());
+            sentencesDF = test.toDF();
         } else {
             sentencesDF = spark.read().text(dir);
         }
-        System.out.println("partitions = "+ sentencesDF.toJavaRDD().partitions());
-        
+         
         Dataset<String> words = sentencesDF.flatMap((Row r) -> {
             return Arrays.asList(SPACE.split(r.getAs("value"))).iterator();
         }, Encoders.STRING());
@@ -79,12 +79,8 @@ public class WordCount {
         // Count word frequency
         Dataset<Row> counts = words.groupBy("value").count();
         Dataset<Row> sorted = counts.sort("count");
-
-        List<Row> result = sorted.collectAsList();
-
-        result.forEach((Row r) -> {
-            System.out.println(r.getAs("count") + ":  " + r.getAs("value"));
-        });
+        sorted.show();
+  
 
         spark.stop();
     }

@@ -64,12 +64,9 @@ public class WordCountRDD {
     if (dir==null) {
         sentences = jSparkContext.parallelize(data);
     } else {
-      //  sentences = jSparkContext.textFile(dir,8).repartition(8);
-         sentences = jSparkContext.textFile(dir,8);
+        sentences = jSparkContext.textFile(dir);
     }
-    // Number of partitions = number of cores (or threads)
-    System.out.println("partitions: "+ sentences.partitions().size());
-    
+     
     // Convert sentences to words ( lamda executes on nodes)
     JavaRDD<String> words = sentences.flatMap((String s) 
             -> Arrays.asList(SPACE.split(s.toLowerCase())).iterator());
@@ -86,8 +83,6 @@ public class WordCountRDD {
     // Order by frequency
     JavaPairRDD<Integer, String> sortedIntPairs = intpairs.sortByKey();
  
- 
-    System.out.println("sorted.toDebugString():" + sortedIntPairs.toDebugString());
     
     List<Tuple2<Integer, String>> output = sortedIntPairs.collect();
     
