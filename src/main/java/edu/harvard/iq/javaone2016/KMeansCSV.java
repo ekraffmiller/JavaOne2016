@@ -67,57 +67,55 @@ public class KMeansCSV {
    
     public void runKmeans(SparkSession spark, String csvFile, int k) {
 
-        
+        // Read data from CSV file into Dataframe
         Dataset<Row> fileData = spark.read().option("header", true).option("inferSchema",true ).csv(csvFile);
+        
+        // Create a table view and run a sql query to filter the data
         fileData.createOrReplaceTempView("publications");
         Dataset<Row> journals = spark.sql("select * from publications where ItemType='Journal Article' ");
+        
+        // Split the "Abstract" column in to words
         Tokenizer tokenizer = new Tokenizer().setInputCol("Abstract").setOutputCol("raw");
         Dataset<Row> rawData = tokenizer.transform(journals);
       
+        // Remove stop words from the raw list of words
         StopWordsRemover remover = new StopWordsRemover()
         .setInputCol("raw")
-        .setOutputCol("filtered"); 
-       
+        .setOutputCol("filtered");       
         Dataset<Row> wordsData = remover.transform(rawData);
+        
+        // Show current contents of DF (20 rows)
         wordsData.show();
+        
+        // Create a feature vector from the words
         CountVectorizerModel cvModel = new CountVectorizer()
                 .setInputCol("filtered")
                 .setOutputCol("rawfeatures")
                 .setVocabSize(10000)
                 .setMinDF(2)
                 .fit(wordsData);
-
         Dataset<Row> rawfeatures = cvModel.transform(wordsData);
-        if (show) {
-            rawfeatures.select("filtered", "rawfeatures").show();
-        }
+        
 
-          // Transforms term frequency (TF) vectors to TF-IDF vectors.
+        // Transforms term frequency (TF) vectors to TF-IDF vectors.
         IDF idf = new IDF().setInputCol("rawfeatures").setOutputCol("features");
         IDFModel idfModel = idf.fit(rawfeatures);
         Dataset<Row> rescaledData = idfModel.transform(rawfeatures);
+        
 
-        // Run kmeans on features
+        // Select a subset of columns for clustering
         Dataset<Row> features = rescaledData.select("features", "Title");
 
-        // Trains a k-means model
+        // Train a k-means model on features
         KMeans kmeans = new KMeans()
                 .setK(k).setMaxIter(200).setTol(.00001);
          KMeansModel model = kmeans.fit(features);
       
-        /*
-        
-        // Shows the result
-        Vector[] centers = model.clusterCenters();
        
-        System.out.println("Cluster Centers: ");
-        for (Vector center : centers) {
-            System.out.println(center);
-        }
-         */
-        
+      // Collect features data back to driver 
       List<Row> resultList =features.collectAsList();
    
+      // Predict a cluster assignment for each feature vector
       resultList.forEach((Row r) -> {
                   System.out.println("clusterId: "+model.predict(r.getAs(0))+" - "+r.getAs(1));
               });
