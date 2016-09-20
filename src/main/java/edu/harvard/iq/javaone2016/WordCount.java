@@ -57,9 +57,7 @@ public class WordCount {
                 "JavaOne is a great conference",
                 "I love San Francisco",
                 "I love Spark logistic regression models",
-                 "I love Spark logistic regression models",
-                 "There are other models available in Spark",
-               "I love Spark logistic regression models",    
+                "There are other models available in Spark",
                 "The Chinese fortune cookie was invented by a Japanese resident of San Francisco",
                 "San Francisco cable cars are the only National Historical Monument that can move",
                 "Irish coffee was perfected and popularized in San Francisco");
@@ -71,16 +69,18 @@ public class WordCount {
         } else {
             sentencesDF = spark.read().text(dir);
         }
-         
+
         Dataset<String> words = sentencesDF.flatMap((Row r) -> {
             return Arrays.asList(SPACE.split(r.getAs("value"))).iterator();
         }, Encoders.STRING());
-        
+
         // Count word frequency
         Dataset<Row> counts = words.groupBy("value").count();
+        // Sort by frequency
         Dataset<Row> sorted = counts.sort("count");
-        sorted.show();
-  
+   
+        List<Row> collected = sorted.collectAsList();
+        collected.forEach(System.out::println);
 
         spark.stop();
     }
