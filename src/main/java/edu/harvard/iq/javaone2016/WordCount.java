@@ -42,7 +42,7 @@ public class WordCount {
         WordCount example = new WordCount();
         Builder builder =SparkSession
                 .builder()
-                .appName("WordCount Dataset Example no sort")
+                .appName("WordCount Dataset Example")
                 .master(master); 
         
      
