@@ -18,10 +18,7 @@
 package edu.harvard.iq.javaone2016;
   
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;  
-import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.ml.clustering.KMeans;
 import org.apache.spark.ml.clustering.KMeansModel;
 import org.apache.spark.ml.feature.CountVectorizer;
@@ -34,12 +31,6 @@ import org.apache.spark.ml.feature.Tokenizer;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
-import org.apache.spark.sql.catalyst.expressions.GenericRow;
-import org.apache.spark.sql.types.DataTypes;
-import org.apache.spark.sql.types.Metadata;
-import org.apache.spark.sql.types.StructField;
-import org.apache.spark.sql.types.StructType;
-import scala.Tuple2;
 /*
 scp /Users/ellenk/src/JavaOne2016/target/JavaOne2016-1.0-SNAPSHOT.jar root@consilience-build.iq.harvard.edu:/root/javaone
 /Applications/spark-2.0.0-bin-hadoop2.7/bin/spark-submit --class edu.harvard.iq.javaone2016.KMeansCSV --master spark://Ellens-MacBook-Pro-2.local:7077 --conf "spark.sql.shuffle.partitions=8"  --verbose  /Users/ellenk/src/JavaOne2016/target/JavaOne2016-1.0-SNAPSHOT.jar "/Users/ellenk/src/Text-Clustering/src/BibTexImport/metadatabibtexAbstract.csv" 4 
@@ -78,10 +69,10 @@ public class KMeansCSV {
 
         
         Dataset<Row> fileData = spark.read().option("header", true).option("inferSchema",true ).csv(csvFile);
-        fileData.createOrReplaceTempView("puplications");
-        spark.sql("select * from publications where ");
+        fileData.createOrReplaceTempView("publications");
+        Dataset<Row> journals = spark.sql("select * from publications where ItemType='Journal Article' ");
         Tokenizer tokenizer = new Tokenizer().setInputCol("Abstract").setOutputCol("raw");
-        Dataset<Row> rawData = tokenizer.transform(fileData);
+        Dataset<Row> rawData = tokenizer.transform(journals);
       
         StopWordsRemover remover = new StopWordsRemover()
         .setInputCol("raw")
