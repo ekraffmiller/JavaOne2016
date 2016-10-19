@@ -16,10 +16,10 @@ import org.junit.Test;
  *
  * @author ellenk
  */
-public class JavaSparkSQLTest {
-    JavaSparkSQL example;
+public class KMeansExampleTest {
+    KMeansExample example;
     SparkSession sparkSession;
-    public JavaSparkSQLTest() {
+    public KMeansExampleTest() {
     }
     
     @BeforeClass
@@ -32,24 +32,33 @@ public class JavaSparkSQLTest {
     
     @Before
     public void setUp() {
-        example = new JavaSparkSQL();
-        sparkSession = SparkSession
+   example = new KMeansExample();
+           sparkSession = SparkSession
                 .builder()
-                .appName("JavaSparkSQL Unit Test")
+                .appName("Java Spark KMeans Dataframe Example")
                 .master("local")
-                .getOrCreate();
-    }
+                .getOrCreate();   }
     
     @After
     public void tearDown() {
     }
 
     /**
-     * Test of readData method, of class JavaSparkSQL.
+     * Test of main method, of class KMeansExample.
      */
     @Test
-    public void testReadData() {
-        example.readData(sparkSession, "/Users/ellenk/src/spark/examples/src/main/resources/people.json");
+    public void testMain() {
+    }
+
+    /**
+     * Test of runKmeans method, of class KMeansExample.
+     */
+    @Test
+    public void testRunKmeans() {
+              String dir = "docs";
+              int k=4;
+              example.runKmeans(sparkSession, dir, k);
+ 
     }
     
 }

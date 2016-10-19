@@ -55,7 +55,7 @@ public class JavaKMeansSessionTest {
      */
     @org.junit.Test
     public void testRunKmeans() {
-         String inputFile = "/Applications/spark-2.0.0-bin-hadoop2.7/data/mllib/kmeans_data.txt";
+         String inputFile = "kmeans_data.txt";
         int k = 2;
         example.runKmeans(spark, inputFile, k);
     }

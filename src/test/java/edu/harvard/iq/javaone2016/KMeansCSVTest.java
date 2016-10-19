@@ -11,15 +11,17 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 /**
  *
  * @author ellenk
  */
-public class AnalyzeTextFilesTest {
-    AnalyzeTextFiles example;
+public class KMeansCSVTest {
+     KMeansCSV example;
     SparkSession sparkSession;
-    public AnalyzeTextFilesTest() {
+  
+    public KMeansCSVTest() {
     }
     
     @BeforeClass
@@ -32,33 +34,33 @@ public class AnalyzeTextFilesTest {
     
     @Before
     public void setUp() {
-   example = new AnalyzeTextFiles();
+        example = new KMeansCSV();
            sparkSession = SparkSession
                 .builder()
-                .appName("Java Spark KMeans Dataframe Example")
+                .appName("Java Spark KMeans CSV Dataframe Example")
                 .master("local")
-                .getOrCreate();   }
+                .getOrCreate();   
+    }
     
     @After
     public void tearDown() {
     }
 
     /**
-     * Test of main method, of class AnalyzeTextFiles.
+     * Test of main method, of class KMeansCSV.
      */
     @Test
     public void testMain() {
     }
 
     /**
-     * Test of runKmeans method, of class AnalyzeTextFiles.
+     * Test of runKmeans method, of class KMeansCSV.
      */
     @Test
     public void testRunKmeans() {
-              String dir = "/Users/ellenk/test/text_doc_root/Laut/docs";
-              int k=4;
-              example.runKmeans(sparkSession, dir, k);
- 
+         String file = "metadatabibtexAbstract.csv";
+              int k=5;
+              example.runKmeans(sparkSession, file, k);
     }
     
 }
