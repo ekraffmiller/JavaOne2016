@@ -16,7 +16,8 @@ import scala.Tuple2;
  */
 
 /*
-scp /Users/ellenk/src/JavaOne2016/target/JavaOne2016-1.0-SNAPSHOT.jar root@consilience-build.iq.harvard.edu:/root/javaone
+ Commands for running on Stand Alone Cluster and Mesos:
+
 /Applications/spark-2.0.0-bin-hadoop2.7/bin/spark-submit --class edu.harvard.iq.javaone2016.WordCountRDD --master spark://Ellens-MacBook-Pro-2.local:7077  --verbose  /Users/ellenk/src/JavaOne2016/target/JavaOne2016-1.0-SNAPSHOT.jar "/Users/ellenk/test/text_doc_root/Laut/docs" 
 /root/spark-2.0.0-bin-hadoop2.7/bin/spark-submit --class edu.harvard.iq.javaone2016.WordCountRDD --master mesos://zk://consilience-m1p.cloudapp.net:2181/mesos  --verbose  /root/javaone/JavaOne2016-1.0-SNAPSHOT.jar  
 */
