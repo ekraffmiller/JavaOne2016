@@ -72,18 +72,18 @@ public class WordCountRDD {
             -> Arrays.asList(SPACE.split(s.toLowerCase())).iterator());
     
     // Convert each word to a pair to prep for counting
-    JavaPairRDD<String, Integer> ones = words.mapToPair((String s) -> new Tuple2<String, Integer>(s, 1));
+    JavaPairRDD<String, Integer> ones = words.mapToPair((String s) -> new Tuple2<>(s, 1));
 
     // Count word frequency
     JavaPairRDD<String, Integer> counts = ones.reduceByKey((Integer i1, Integer i2) -> i1 + i2);
     
     // flip the pair to make the frequency the key
-    JavaPairRDD<Integer, String> intpairs = counts.mapToPair((Tuple2<String,Integer> tuple )->  {return  new Tuple2<Integer,String>(tuple._2,tuple._1);});
+    JavaPairRDD<Integer, String> intpairs = counts.mapToPair((Tuple2<String,Integer> tuple )->  {return  new Tuple2<>(tuple._2,tuple._1);});
    
     // Order by frequency
     JavaPairRDD<Integer, String> sortedIntPairs = intpairs.sortByKey();
  
-    
+    // Call to collect() triggers DAG execution
     List<Tuple2<Integer, String>> output = sortedIntPairs.collect();
     
     
