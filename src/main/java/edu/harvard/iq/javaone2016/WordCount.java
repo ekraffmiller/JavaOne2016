@@ -25,7 +25,7 @@ scp /Users/ellenk/src/JavaOne2016/target/JavaOne2016-1.0-SNAPSHOT.jar root@consi
 public class WordCount {
 
     static final Pattern SPACE = Pattern.compile(" ");
-    static final List<String> testData = Arrays.asList(
+    static final List<String> TEST_DATA = Arrays.asList(
             "Hi I heard about Spark",
             "JavaOne is a great conference",
             "I love San Francisco",
@@ -35,12 +35,7 @@ public class WordCount {
             "San Francisco cable cars are the only National Historical Monument that can move",
             "Irish coffee was perfected and popularized in San Francisco");
 
-    public static void main(String[] args) {
-        String dir = null;
-
-        if (args.length > 0) {
-            dir = args[0];
-        }
+    public static void main(String[] args) {      
      
         SparkSession spark =
                  SparkSession
@@ -48,18 +43,23 @@ public class WordCount {
                 .appName(" WordCount RDD Example ")
                 .getOrCreate();
      
+         
+        // Distribute data to cluster nodes   
         Dataset<Row> sentencesDF;
-        if (dir == null) {
-            Dataset<String> test = spark.createDataset(testData, Encoders.STRING());
+        if (args.length==0) {
+            Dataset<String> test = spark.createDataset(TEST_DATA, Encoders.STRING());
             sentencesDF = test.toDF();
         } else {
-            sentencesDF = spark.read().text(dir);
+            sentencesDF = spark.read().text(args[0]);
         }
 
+        // Map Dataset of sentences into words 
         Dataset<String> words = sentencesDF.flatMap((Row r) -> {
             return Arrays.asList(SPACE.split(r.getAs("value"))).iterator();
         }, Encoders.STRING());
 
+        // Use higher-level API of Dataset to count and sort word frequencies -
+        
         // Count word frequency
         Dataset<Row> counts = words.groupBy("value").count();
         // Sort by frequency

@@ -23,8 +23,8 @@ import scala.Tuple2;
 */
 public class WordCountRDD {
     
-    private static final Pattern SPACE = Pattern.compile(" ");
-    private static List<String> testData = Arrays.asList(
+    static final Pattern SPACE = Pattern.compile(" ");
+    static final List<String> TEST_DATA = Arrays.asList(
        "Hi I heard about Spark",
        "JavaOne is a great conference",
        "I love San Francisco",
@@ -36,24 +36,22 @@ public class WordCountRDD {
     
     
     public static void main(String[] args) {
-        String dir = null;
-        if (args.length > 0) {
-            dir = args[0];
-        }
+       
 
         SparkSession spark = SparkSession
                 .builder()
                 .appName(" WordCount RDD Example ")
                 .getOrCreate();
 
+        // Get a JavaSparkContext so we can work with RDDs
         JavaSparkContext jSparkContext = new JavaSparkContext(spark.sparkContext());
 
         // Distribute data to cluster nodes   
         JavaRDD<String> sentences;
-        if (dir == null) {
-            sentences = jSparkContext.parallelize(testData);
+        if (args.length == 0) {
+            sentences = jSparkContext.parallelize(TEST_DATA);
         } else {
-            sentences = jSparkContext.textFile(dir);
+            sentences = jSparkContext.textFile(args[0]);
         }
 
         // Convert sentences to words ( lamda executes on nodes)
