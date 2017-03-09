@@ -21,26 +21,12 @@ import org.apache.spark.sql.SparkSession;
 public class ClassificationPipeline {
 
     public static void main(String[] args) {
-        String master = "local";
-
-        String runtimeMaster = System.getProperty("spark.master");
-        if (runtimeMaster != null) {
-            master = runtimeMaster;
-        }
-
-        ClassificationPipeline example = new ClassificationPipeline();
-
+    
         SparkSession spark = SparkSession
                 .builder()
                 .appName("Classification Example")
-                .master(master)
                 .getOrCreate();
 
-        example.runRegression(spark);
-        spark.stop();
-    }
-
-    public void runRegression(SparkSession spark) {
         // Prepare training documents, which are labeled.
         List<LabeledDocument> localTraining = Lists.newArrayList(
                 new LabeledDocument(0L, "a b c d e spark", 1.0),
@@ -91,7 +77,7 @@ public class ClassificationPipeline {
             System.out.println("(" + r.get(0) + ", " + r.get(1) + ") --> prob=" + r.get(2)
                     + ", prediction=" + r.get(3));
         }
-        
+        spark.stop();
 
     }
 
