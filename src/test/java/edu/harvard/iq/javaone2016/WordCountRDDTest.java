@@ -5,54 +5,53 @@
  */
 package edu.harvard.iq.javaone2016;
 
-import java.io.File;
-import org.apache.spark.sql.SparkSession;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import static org.junit.Assert.*;
+
 /**
  *
  * @author ellenk
  */
-public class WordCountTest {
-
-    WordCount example;
-    SparkSession sparkSession;
-
-    public WordCountTest() {
+public class WordCountRDDTest {
+    
+    public WordCountRDDTest() {
     }
-
+    
     @BeforeClass
     public static void setUpClass() {
     }
-
+    
     @AfterClass
     public static void tearDownClass() {
     }
-
+    
     @Before
     public void setUp() {
-       
     }
-
+    
     @After
     public void tearDown() {
     }
 
-   
     /**
-     * Test of run method, of class WordCount.
+     * Test of main method, of class WordCountRDD.
+     */
+    @Test
+    public void testMain() {
+       
+        System.setProperty("spark.master","local[2]");   
+        WordCountRDD.main(new String[]{});
+    }
+
+    /**
+     * Test of run method, of class WordCountRDD.
      */
     @Test
     public void testRun() {
-        
-       String[] args = {"src/test/resources/docs1"};      
-       System.setProperty("spark.master","local[2]");   
-       
-       WordCount.main(args);
-  
     }
     
 }

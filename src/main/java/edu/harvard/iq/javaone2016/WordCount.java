@@ -24,47 +24,33 @@ scp /Users/ellenk/src/JavaOne2016/target/JavaOne2016-1.0-SNAPSHOT.jar root@consi
  */
 public class WordCount {
 
-    private static final Pattern SPACE = Pattern.compile(" ");
+    static final Pattern SPACE = Pattern.compile(" ");
+    static final List<String> testData = Arrays.asList(
+            "Hi I heard about Spark",
+            "JavaOne is a great conference",
+            "I love San Francisco",
+            "I love Spark logistic regression models",
+            "There are other models available in Spark",
+            "The Chinese fortune cookie was invented by a Japanese resident of San Francisco",
+            "San Francisco cable cars are the only National Historical Monument that can move",
+            "Irish coffee was perfected and popularized in San Francisco");
 
     public static void main(String[] args) {
         String dir = null;
-        
+
         if (args.length > 0) {
             dir = args[0];
         }
-      
-        String master = "local[2]";
-        String runtimeMaster = System.getProperty("spark.master");
-        if (runtimeMaster != null) {
-            master = runtimeMaster;
-        }
-
-        WordCount example = new WordCount();
-        Builder builder =SparkSession
-                .builder()
-                .appName("WordCount Dataset Example")
-                .master(master); 
-        
      
-        SparkSession spark = 
-                builder.getOrCreate();
-        example.run(spark, dir);
-    }
-
-    public void run(SparkSession spark, String dir) {
-        List<String> data = Arrays.asList(
-                "Hi I heard about Spark",
-                "JavaOne is a great conference",
-                "I love San Francisco",
-                "I love Spark logistic regression models",
-                "There are other models available in Spark",
-                "The Chinese fortune cookie was invented by a Japanese resident of San Francisco",
-                "San Francisco cable cars are the only National Historical Monument that can move",
-                "Irish coffee was perfected and popularized in San Francisco");
-
+        SparkSession spark =
+                 SparkSession
+                .builder()
+                .appName(" WordCount RDD Example ")
+                .getOrCreate();
+     
         Dataset<Row> sentencesDF;
         if (dir == null) {
-            Dataset<String> test = spark.createDataset(data, Encoders.STRING());
+            Dataset<String> test = spark.createDataset(testData, Encoders.STRING());
             sentencesDF = test.toDF();
         } else {
             sentencesDF = spark.read().text(dir);
@@ -78,7 +64,7 @@ public class WordCount {
         Dataset<Row> counts = words.groupBy("value").count();
         // Sort by frequency
         Dataset<Row> sorted = counts.sort("count");
-   
+
         List<Row> collected = sorted.collectAsList();
         collected.forEach(System.out::println);
 
