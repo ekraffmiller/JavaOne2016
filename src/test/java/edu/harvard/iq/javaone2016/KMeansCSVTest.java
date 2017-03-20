@@ -34,12 +34,7 @@ public class KMeansCSVTest {
     
     @Before
     public void setUp() {
-        example = new KMeansCSV();
-           sparkSession = SparkSession
-                .builder()
-                .appName("Java Spark KMeans CSV Dataframe Example")
-                .master("local")
-                .getOrCreate();   
+      
     }
     
     @After
@@ -51,16 +46,13 @@ public class KMeansCSVTest {
      */
     @Test
     public void testMain() {
-    }
+   
+        String file = "src/test/resources/metadatabibtexAbstract.csv";
+        String k = "4";
+        String[] args = {file, k};
+        System.setProperty("spark.master", "local[2]");
+        KMeansCSV.main(args);
 
-    /**
-     * Test of runKmeans method, of class KMeansCSV.
-     */
-    @Test
-    public void testRunKmeans() {
-         String file = "metadatabibtexAbstract.csv";
-              int k=5;
-              example.runKmeans(sparkSession, file, k);
     }
     
 }

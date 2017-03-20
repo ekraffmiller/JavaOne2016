@@ -17,9 +17,9 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 /*
-scp /Users/ellenk/src/JavaOne2016/target/JavaOne2016-1.0-SNAPSHOT.jar root@consilience-build.iq.harvard.edu:/root/javaone
-/Applications/spark-2.0.0-bin-hadoop2.7/bin/spark-submit --class edu.harvard.iq.javaone2016.KMeansCSV --master spark://Ellens-MacBook-Pro-2.local:7077 --conf "spark.sql.shuffle.partitions=8"  --verbose  /Users/ellenk/src/JavaOne2016/target/JavaOne2016-1.0-SNAPSHOT.jar "/Users/ellenk/src/Text-Clustering/src/BibTexImport/metadatabibtexAbstract.csv" 4 
- /root/spark-2.0.0-bin-hadoop2.7/bin/spark-submit --class edu.harvard.iq.javaone2016.KMeansExample --master mesos://zk://consilience-m1p.cloudapp.net:2181/mesos   --verbose  /root/javaone/JavaOne2016-1.0-SNAPSHOT.jar  "/mnt/consilience-smb1/docs" 4
+scp /Users/ellenk/src/JavaOne2016/target/JavaOne2016-1.0-SNAPSHOT.jar root@consilience-build.iq.harvard.edu:/tmp
+/Applications/spark-2.1.0-bin-hadoop2.7/bin/spark-submit --class edu.harvard.iq.javaone2016.KMeansCSV --master spark://Ellens-MacBook-Pro-2.local:7077 --conf "spark.sql.shuffle.partitions=8"  --verbose  /Users/ellenk/src/JavaOne2016/target/JavaOne2016-1.0-SNAPSHOT.jar "/Users/ellenk/src/Text-Clustering/src/BibTexImport/metadatabibtexAbstract.csv" 4 
+ /home/glassfish/spark-2.1.0-bin-hadoop2.7/bin/spark-submit --class edu.harvard.iq.javaone2016.KMeansExample --master mesos://zk://consilience-m1p.cloudapp.net:2181/mesos   --verbose  /root/javaone/JavaOne2016-1.0-SNAPSHOT.jar  "/mnt/consilience-smb1/docs" 4
 */
 
 public class KMeansCSV {
@@ -29,29 +29,18 @@ public class KMeansCSV {
             System.err.println("Usage: KMeansExample <file> <k>");
             System.exit(1);
         }
-        String master = "local";
-     
-        String runtimeMaster = System.getProperty("spark.master");
-        if (runtimeMaster!=null) {
-            master = runtimeMaster;
-        }
-        String inputFile = args[0];
+      
+        String csvFile = args[0];
         int k = Integer.parseInt(args[1]);
        
-        KMeansCSV  example = new KMeansCSV();
-       
+        
         SparkSession spark = SparkSession
                 .builder()
                 .appName("Kmeans Example")
-                .master(master) 
                 .getOrCreate();
 
-        example.runKmeans(spark, inputFile, k);
-        spark.stop();
-    }
-   
-    public void runKmeans(SparkSession spark, String csvFile, int k) {
-
+       
+     
         // Read data from CSV file into Dataframe
         Dataset<Row> fileData = spark.read().option("header", true).option("inferSchema",true ).csv(csvFile);
         
@@ -80,8 +69,8 @@ public class KMeansCSV {
                 .setMinDF(2)
                 .fit(wordsData);
         Dataset<Row> rawfeatures = cvModel.transform(wordsData);
+        rawfeatures.show();
         
-
         // Transforms term frequency (TF) vectors to TF-IDF vectors.
         IDF idf = new IDF().setInputCol("rawfeatures").setOutputCol("features");
         IDFModel idfModel = idf.fit(rawfeatures);
@@ -106,6 +95,7 @@ public class KMeansCSV {
               });
      
 
-        
+    spark.stop();
     }
+    
 }
