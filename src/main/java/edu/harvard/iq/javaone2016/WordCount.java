@@ -20,7 +20,7 @@ import org.apache.spark.sql.SparkSession.Builder;
 scp /Users/ellenk/src/JavaOne2016/target/JavaOne2016-1.0-SNAPSHOT.jar root@consilience-build.iq.harvard.edu:/root/javaone
 /Applications/spark-2.0.0-bin-hadoop2.7/bin/spark-submit --class edu.harvard.iq.javaone2016.WordCount --master spark://Ellens-MacBook-Pro-2.local:7077 --conf "spark.sql.shuffle.partitions=8" --verbose  /Users/ellenk/src/JavaOne2016/target/JavaOne2016-1.0-SNAPSHOT.jar "/Users/ellenk/test/text_doc_root/Laut/docs"
 /Applications/spark-2.0.0-bin-hadoop2.7/bin/spark-submit --class edu.harvard.iq.javaone2016.WordCount --master spark://Ellens-MacBook-Pro-2.local:7077  --verbose  /Users/ellenk/src/JavaOne2016/target/JavaOne2016-1.0-SNAPSHOT.jar 
-/root/spark-2.0.0-bin-hadoop2.7/bin/spark-submit --class edu.harvard.iq.javaone2016.WordCount --master mesos://zk://consilience-m1p.cloudapp.net:2181/mesos --conf "spark.sql.shuffle.partitions=32" --verbose  /root/javaone/JavaOne2016-1.0-SNAPSHOT.jar   "/mnt/consilience-smb1/docs"
+/root/spark-2.0.0-bin-hadoop2.7/bin/spark-submit --class edu.harvard.iq.javaone2016.WordCount --master spark://iqss-devoxx-m1.cloudapp.net:7077 --conf "spark.sql.shuffle.partitions=32" --verbose  /root/javaone/JavaOne2016-1.0-SNAPSHOT.jar   "/mnt/consilience-smb1/docs"
  */
 public class WordCount {
 
@@ -40,7 +40,7 @@ public class WordCount {
         SparkSession spark =
                  SparkSession
                 .builder()
-                .appName(" WordCount RDD Example ")
+                .appName(" WordCount DataFrame Example ")
                 .getOrCreate();
      
          

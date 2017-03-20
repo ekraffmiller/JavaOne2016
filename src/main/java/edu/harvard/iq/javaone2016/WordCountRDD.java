@@ -16,17 +16,17 @@ import scala.Tuple2;
  */
 
 /*
- Commands for running on Stand Alone Cluster and Mesos:
+ Commands for running on Stand Alone Cluster and locally and on cloud instances:
 
 /Applications/spark-2.1.0-bin-hadoop2.7/bin/spark-submit --class edu.harvard.iq.javaone2016.WordCountRDD --master spark://Ellens-MacBook-Pro-2.local:7077  --verbose  /Users/ellenk/src/JavaOne2016/target/JavaOne2016-1.0-SNAPSHOT.jar "/Users/ellenk/test/text_doc_root/Laut/docs" 
-/root/spark-2.1.0-bin-hadoop2.7/bin/spark-submit --class edu.harvard.iq.javaone2016.WordCountRDD --master mesos://zk://consilience-m1p.cloudapp.net:2181/mesos  --verbose  /root/javaone/JavaOne2016-1.0-SNAPSHOT.jar  
+/home/glassfish/spark-2.1.0-bin-hadoop2.7/bin/spark-submit --class edu.harvard.iq.javaone2016.WordCountRDD --master spark://iqss-devoxx-m1.cloudapp.net:7077  --verbose  /tmp/javaone/JavaOne2016-1.0-SNAPSHOT.jar  
 */
 public class WordCountRDD {
     
     static final Pattern SPACE = Pattern.compile(" ");
     static final List<String> TEST_DATA = Arrays.asList(
        "Hi I heard about Spark",
-       "JavaOne is a great conference",
+       "Devoxx US is a great conference",
        "I love San Francisco",
        "I love Spark logistic regression models",
        "There are other models available in Spark",
@@ -71,7 +71,7 @@ public class WordCountRDD {
 
         // Order by frequency
         JavaPairRDD<Integer, String> sortedIntPairs = intpairs.sortByKey();
-
+        sortedIntPairs.foreach((pair) ->  {System.out.println("distributed- "+pair._1 +": "+ pair._2);}); 
         // Call to collect() triggers DAG execution
         List<Tuple2<Integer, String>> output = sortedIntPairs.collect();
 
