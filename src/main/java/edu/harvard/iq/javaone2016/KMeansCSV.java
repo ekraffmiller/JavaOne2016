@@ -65,8 +65,8 @@ public class KMeansCSV {
         CountVectorizerModel cvModel = new CountVectorizer()
                 .setInputCol("filtered")
                 .setOutputCol("rawfeatures")
-                .setVocabSize(10000)
-                .setMinDF(2)
+                .setVocabSize(20000)
+                .setMinDF(10)
                 .fit(wordsData);
         Dataset<Row> rawfeatures = cvModel.transform(wordsData);
         rawfeatures.show();
@@ -82,7 +82,7 @@ public class KMeansCSV {
 
         // Train a k-means model on features
         KMeans kmeans = new KMeans()
-                .setK(k).setMaxIter(200).setTol(.00001);
+                .setK(k).setMaxIter(500).setTol(.000001);
          KMeansModel model = kmeans.fit(features);
       
        
